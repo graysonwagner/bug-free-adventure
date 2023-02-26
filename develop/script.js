@@ -1,73 +1,74 @@
 
-var generateBtn = document.querySelector("#generate");
-var numberOfCharacters;
-var useUpperCase;
-var useLowerCase;
-var useNumbers;
-var useSpecialCharacters;
-var selectedCharacters = []
-var randomCharacters = ""
-var randomPassword = [];
-var finalPassword = "";
 
-var upperCase = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",];
-var lowerCase = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",];
-var nums = ["1","2","3","4","5","6","7","8","9","0",];
-var specialCharacters = ["!","@","#","$","%","^","&","*","(","(","_","-","+","=","{","}","[","]","|",";",":","<",",",">",".","?","/",];
 
-function generatePassword(){
-  numberOfCharacters = parseInt(prompt("How many characters would you like to use? Please select a number from 8-128"));
-  if (numberOfCharacters < "8" || numberOfCharacters > "128"){
-    alert("Please choose a number of characters from 8-128");
-    generatePassword();
-  }else{
 
-    useUpperCase = confirm("Do you want to use uppercase letters?");
+var generateButton = document.querySelector("#generate")
+var passwordText = document.querySelector("#password")
+var copyButton = document.querySelector("#copy")
 
-    if(useUpperCase){
-      selectedCharacters.push(...upperCase)
+
+// Possible outcomes
+var password = ''
+var specialCharacterList = '@#$%^&*()'
+var numericCharactersList = '1234567890'
+var lowercaseCharactersList = 'abcdefghijklmnopqrstuvwxyz'
+var uppercaseCharactersList = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+var possibleCharacterList = ''
+
+function makePassword() {
+  var passwordLength = prompt('How many characters would you like in your password? (8-128)');
+
+    passwordLength = parseInt(passwordLength)
+    if (passwordLength > 128 || passwordLength < 8) {
+        alert('Password length must be between 8 and 128 characters.')
+        return;
     }
-
-
-    useLowerCase = confirm("Do you want to use lowercase letters?");
-
-    if(useLowerCase){
-      selectedCharacters.push(...lowerCase)
-    }
-
-
-    useNumbers = confirm("Do you want to use numbers?");
-
-    if(useNumbers){
-      selectedCharacters.push(...nums)
-    }
-
-
-    useSpecialCharacters = confirm("Do you want to use special characters?");
-
-    if(useSpecialCharacters){
-      selectedCharacters.push(...specialCharacters)
-    }
-
     
-    for(var x = 0; x < numberOfCharacters; x++){
-      randomCharacters = selectedCharacters[(Math.floor(Math.random() * (selectedCharacters.length)))];
-      randomPassword.push(...randomCharacters);
+    if (Number.isNaN(passwordLength) === true) {
+        alert('This must be a number.')
+        return;
     }
 
-    finalPassword = randomPassword.join("");
-    
-  }  
+    var specialCharacters = confirm('Do you want special characters?')
+    var numericCharacters = confirm('Do you want numbers?')
+    var lowercaseCharacters = confirm('Do you want lowercase letters?')
+    var uppercaseCharacters = confirm('Do you want uppercase Characters?')
 
-  return(finalPassword);
+    if (specialCharacters === true) {
+        possibleCharacterList += specialCharacterList
+    }
+
+    if (numericCharacters === true) {
+        possibleCharacterList += numericCharactersList
+    }
+
+    if (lowercaseCharacters === true) {
+        possibleCharacterList += lowercaseCharactersList
+    }
+
+    if (uppercaseCharacters === true) {
+        possibleCharacterList += uppercaseCharactersList
+    }
+
+    if (specialCharacters === false && numericCharacters === false && lowercaseCharacters === false && uppercaseCharacters === false) {
+        alert('Select at least one character')
+        return;
+    }
+
+    for (var i = 0; i < passwordLength; i++) {
+        password += possibleCharacterList.charAt(Math.floor(Math.random() * possibleCharacterList.length));
+    }
+
+    // Password sent to textbox!
+    passwordText.textContent = password
 }
-
-function writePassword() {
-  var password = generatePassword();
-  var passwordText = document.querySelector("#password");
-
-  passwordText.value = password;
-
+// Clipboard function
+function clipboard() {
+  passwordText.select();
+  passwordText.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  alert("Copied the text: " + passwordText.value);
 }
+generateButton.addEventListener("click", makePassword);
 
-generateBtn.addEventListener("click", writePassword);
+copyButton.addEventListener("click", clipboard);
